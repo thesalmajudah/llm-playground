@@ -3,6 +3,7 @@
 This repo is to follow up, practice, and do homework for the Data Engineering Zoomcamp 2024 powered by [DataTalks Club](https://datatalks.club/). 
 
 ## Course Modules:
+[Pre-course Workshop: Build a Search Engine](https://github.com/alexeygrigorev/build-your-own-search-engine)
 
 [Module 1: Intro](https://github.com/DataTalksClub/llm-zoomcamp/tree/main/01-intro)
 
