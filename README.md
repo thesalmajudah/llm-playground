@@ -11,6 +11,8 @@ This repo is to follow up, practice, and do homework for the Data Engineering Zo
 
 [Workshop: Open-Source Data Ingestion](https://github.com/DataTalksClub/llm-zoomcamp/blob/main/cohorts/2025/workshops/dlt.md)
 
+[Module A: Agents (bonus)](https://github.com/DataTalksClub/llm-zoomcamp/tree/main/0a-agents)
+
 [Module 3: RAG and LLM Evaluation](https://github.com/DataTalksClub/llm-zoomcamp/tree/main/03-evaluation)
 
 [Module 4: Monitoring](https://github.com/DataTalksClub/llm-zoomcamp/tree/main/04-monitoring)
