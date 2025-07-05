@@ -1,6 +1,6 @@
 # 🔍 Module 2 – Vector Search in RAG Systems
 
-![Module 2 Overview](llm-playground/images/module2.jpeg)
+![Module 2 Overview](module2.jpeg)
 
 Module 2 delivered a powerful deep dive into **Vector Search**, one of the foundational building blocks of modern Retrieval-Augmented Generation (RAG) systems.
 

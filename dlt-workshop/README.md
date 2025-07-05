@@ -1,6 +1,6 @@
 # 🧠 From REST to Reasoning: Ingest, Index & Query with dlt + Cognee
 
-![Workshop Overview](llm-playground/images/dlt-workshop.png)
+![Workshop Overview](dlt-workshop.png)
 
 This workshop bridged data pipelines and semantic reasoning — from ingesting data to building LLM-ready knowledge graphs!
 
