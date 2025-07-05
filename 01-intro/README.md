@@ -1,6 +1,6 @@
 # 🧠 Module 1 – Retrieval-Augmented Generation (RAG)
 
-![Module 1 Overview](llm-playground/images/module1.jpeg)
+![Module 1 Overview](module1.jpeg)
 
 In Module 1, I built a basic RAG (Retrieval-Augmented Generation) flow that searches a knowledge base and retrieves relevant context to improve LLM responses.
 
