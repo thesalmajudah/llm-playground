@@ -9,12 +9,10 @@ class Tools:
         self.functions = {}      # name -> function map
 
     def add_tool(self, function, function_spec):
-        """Add a tool by its callable and its function spec dict."""
-        self.functions[function_spec["name"]] = function
-        self.tool_specs.append({
-            "type": "function",
-            "function": function_spec
-        })
+        """Add a tool by its callable and its function spec dict (Groq-compatible)."""
+        tool_name = function_spec["function"]["name"]
+        self.functions[tool_name] = function
+        self.tool_specs.append(function_spec)
 
     def get_tools(self):
         return self.tool_specs
@@ -26,10 +24,9 @@ class Tools:
         result = f(**arguments)
         return {
             "type": "function_call_output",
-            "call_id": tool_call_response.call_id,
-            "output": json.dumps(result, indent=2),
+            "call_id": tool_call_response.id,
+            "output": json.dumps(result, indent=2),  # ⚠️ was 'content' before, now correctly matched to this
         }
-
 
 
 def shorten(text, max_length=50):
@@ -55,7 +52,7 @@ class ChatInterface:
             </div>
             <div>
                 <b>Output</b>
-                <pre>{result['content']}</pre>
+                <pre>{result['output']}</pre>  <!-- ✅ FIXED: used 'output' instead of 'content' -->
             </div>
             </details>
         """
@@ -114,6 +111,7 @@ class ChatAssistant:
                         })
                         chat_messages.append(result)
                         self.chat_interface.display_function_call(tool_call, result)
+
                 # Handle final message
                 if message.content:
                     chat_messages.append({"role": "assistant", "content": message.content})
