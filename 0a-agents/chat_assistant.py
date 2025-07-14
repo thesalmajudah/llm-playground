@@ -5,34 +5,40 @@ import markdown
 
 class Tools:
     def __init__(self):
-        self.tool_specs = []     # stores tool specs
-        self.functions = {}      # name -> function map
+        self.functions = {}     # function name -> callable
+        self.tool_specs = []    # list of OpenAI/Groq-compatible function specs
 
     def add_tool(self, function, function_spec):
-        """Add a tool by its callable and its function spec dict (Groq-compatible)."""
+        """Add a callable tool with its full OpenAI-style spec."""
         tool_name = function_spec["function"]["name"]
         self.functions[tool_name] = function
-        self.tool_specs.append(function_spec)
+
+        # Ensure correct structure: {"type": "function", "function": {...}}
+        self.tool_specs.append({
+            "type": "function",
+            "function": function_spec["function"]
+        })
 
     def get_tools(self):
         return self.tool_specs
 
     def function_call(self, tool_call_response):
+        # Access name and arguments from Groq's structured tool call
         function_name = tool_call_response.function.name
         arguments = json.loads(tool_call_response.function.arguments)
+
         f = self.functions[function_name]
         result = f(**arguments)
+
         return {
             "type": "function_call_output",
             "call_id": tool_call_response.id,
-            "output": json.dumps(result, indent=2),  # ⚠️ was 'content' before, now correctly matched to this
+            "output": json.dumps(result, indent=2)
         }
 
 
 def shorten(text, max_length=50):
-    if len(text) <= max_length:
-        return text
-    return text[:max_length - 3] + "..."
+    return text if len(text) <= max_length else text[:max_length - 3] + "..."
 
 
 class ChatInterface:
@@ -44,17 +50,17 @@ class ChatInterface:
 
     def display_function_call(self, entry, result):
         call_html = f"""
-            <details>
-            <summary>Function call: <tt>{entry.function.name}({shorten(entry.function.arguments)})</tt></summary>
-            <div>
-                <b>Call</b>
-                <pre>{json.dumps(entry.model_dump(), indent=2)}</pre>
-            </div>
-            <div>
-                <b>Output</b>
-                <pre>{result['output']}</pre>  <!-- ✅ FIXED: used 'output' instead of 'content' -->
-            </div>
-            </details>
+        <details>
+        <summary>Function call: <tt>{entry.function.name}({shorten(entry.function.arguments)})</tt></summary>
+        <div>
+            <b>Call</b>
+            <pre>{json.dumps(entry.model_dump(), indent=2)}</pre>
+        </div>
+        <div>
+            <b>Output</b>
+            <pre>{result['output']}</pre>
+        </div>
+        </details>
         """
         display(HTML(call_html))
 
@@ -71,7 +77,7 @@ class ChatAssistant:
 
     def gpt(self, chat_messages):
         return self.client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="llama3-70b-8192",  # or another Groq-compatible model
             messages=chat_messages,
             tools=self.tools.get_tools(),
             tool_choice="auto"
@@ -89,7 +95,6 @@ class ChatAssistant:
                 break
 
             chat_messages.append({"role": "user", "content": question})
-
             max_depth = 5
             depth = 0
 
@@ -97,10 +102,11 @@ class ChatAssistant:
                 response = self.gpt(chat_messages)
                 message = response.choices[0].message
 
-                # Handle tool call
+                # Handle tool calls
                 if message.tool_calls:
                     for tool_call in message.tool_calls:
                         result = self.tools.function_call(tool_call)
+
                         chat_messages.append({
                             "role": "assistant",
                             "content": None,
@@ -109,12 +115,21 @@ class ChatAssistant:
                                 "arguments": tool_call.function.arguments
                             }
                         })
-                        chat_messages.append(result)
+
+                        chat_messages.append({
+                            "role": "tool",
+                            "tool_call_id": tool_call.id,
+                            "content": result["output"]
+                        })
+
                         self.chat_interface.display_function_call(tool_call, result)
 
-                # Handle final message
+                # Handle assistant message
                 if message.content:
-                    chat_messages.append({"role": "assistant", "content": message.content})
+                    chat_messages.append({
+                        "role": "assistant",
+                        "content": message.content
+                    })
                     self.chat_interface.display_response(message)
                     break
 
