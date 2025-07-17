@@ -211,27 +211,29 @@ def convert_mcp_tool_to_function_format(mcp_tool):
     # Convert the tool format
     function_tool = {
         "type": "function",
-        "name": name,
-        "description": clean_description,
-        "parameters": {
-            "type": "object",
-            "properties": {},
-            "required": input_schema.get('required', []),
-            "additionalProperties": False
+        "function": {
+            "name": name,
+            "description": clean_description,
+            "parameters": {
+                "type": "object",
+                "properties": {},
+                "required": input_schema.get('required', []),
+                "additionalProperties": False
+            }
         }
     }
     
     # Convert properties
     if 'properties' in input_schema:
         for prop_name, prop_info in input_schema['properties'].items():
-            function_tool["parameters"]["properties"][prop_name] = {
+            function_tool['function']["parameters"]["properties"][prop_name] = {
                 "type": prop_info.get('type', 'string'),
                 "description": prop_info.get('description', f"{prop_name.replace('_', ' ').title()}")
             }
             
             # Add title as description if no description exists
             if 'title' in prop_info and 'description' not in prop_info:
-                function_tool["parameters"]["properties"][prop_name]["description"] = prop_info['title']
+                function_tool['function']["parameters"]["properties"][prop_name]["description"] = prop_info['title']
     
     return function_tool
 
@@ -262,13 +264,14 @@ class MCPTools:
         return self.tools
 
     def function_call(self, tool_call_response):
-        function_name = tool_call_response.name
-        arguments = json.loads(tool_call_response.arguments)
+        function_name = tool_call_response.function.name
+        arguments = json.loads(tool_call_response.function.arguments)
 
         result = self.mcp_client.call_tool(function_name, arguments)
-
+    
         return {
-            "type": "function_call_output",
-            "call_id": tool_call_response.call_id,
-            "output": json.dumps(result, indent=2),
-        }
+                "role": "tool",
+                "tool_call_id": tool_call_response.id,
+                "name": function_name,
+                "content": json.dumps(result, indent=2),
+            }
