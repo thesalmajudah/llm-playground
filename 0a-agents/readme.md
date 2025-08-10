@@ -33,16 +33,6 @@ I built an **LLM-powered chatbot** that:
 
 ---
 
-## 🛠 Agent Workflow
-
-```mermaid
-flowchart TD
-    User -->|question| Chatbot
-    Chatbot -->|tool call| Tool[get_weather / add_entry]
-    Tool -->|result| Chatbot
-    Chatbot -->|final response| User
-
-
 # 🧠 BONUS – AI Agents 2
 
 # AI Agents vs Model Context Protocol (MCP)
@@ -75,6 +65,22 @@ Autonomous decision-making, planning, and task execution.
 - Reasoning and planning  
 - Interaction with external systems to achieve goals  
 
+## Function Calling
+
+![function-call](agents-mcp.png)
+
+**What it is:**  
+Function calling is a way for an AI model to trigger specific, predefined functions — passing structured arguments and receiving structured outputs.  
+
+**Why it matters here:**  
+- AI agents can **use function calling to execute precise actions** like "get_flight_prices" or "update_customer_record".  
+- MCP can **serve as the bridge** between those function calls and the actual external systems, APIs, or databases that carry them out.  
+
+This creates a seamless workflow:  
+1. The agent reasons about what to do.  
+2. It calls a function (structured request).  
+3. MCP handles the integration and returns structured results.  
+
 ---
 
 ## Model Context Protocol (MCP)
@@ -95,6 +101,7 @@ Standardized communication and data access between AI models and external system
 - Easy integration  
 - Improved maintainability  
 
+
 ---
 
 ## How They Work Together
@@ -112,3 +119,15 @@ Think of it this way:
 They are **not competing** technologies — they work together to enable more powerful and versatile AI systems.
 
 ---
+
+
+## 🛠 Agent Workflow
+
+```mermaid
+flowchart TD
+    User -->|question| Chatbot
+    Chatbot -->|tool call| Tool[get_weather / add_entry]
+    Tool -->|result| Chatbot
+    Chatbot -->|final response| User
+
+
