@@ -67,10 +67,10 @@ Autonomous decision-making, planning, and task execution.
 
 ## Function Calling
 
-![function-call](agents-mcp.png)
+![example](function-call.png)
 
 **What it is:**  
-Function calling is a way for an AI model to trigger specific, predefined functions — passing structured arguments and receiving structured outputs.  
+Function calling is a way for an AI model to trigger specific, predefined functions,passing structured arguments and receiving structured outputs.  
 
 **Why it matters here:**  
 - AI agents can **use function calling to execute precise actions** like "get_flight_prices" or "update_customer_record".  
