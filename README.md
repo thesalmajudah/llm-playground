@@ -4,4 +4,4 @@ This repo is to follow up, practice, and do homework for the LLM Zoomcamp 2026 p
 
 ## Course Modules:
 
-[Module 1: Intro](https://github.com/DataTalksClub/llm-zoomcamp/tree/main/01-agentic-rag)
+[Module 1: Agentic RAG](https://github.com/DataTalksClub/llm-zoomcamp/tree/main/01-agentic-rag)
