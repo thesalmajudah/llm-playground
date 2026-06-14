@@ -14,6 +14,6 @@ models/
 
 *.python-version
 
-*.uv.lock
+uv.lock
 
-*.main.py
+main.py
