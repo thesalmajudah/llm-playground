@@ -23,7 +23,7 @@ class RAGBase:
         instructions=INSTRUCTIONS,
         prompt_template=PROMPT_TEMPLATE,
         course="llm-zoomcamp",
-        model="gemini-2.5-flash"
+        model="llama-3.1-8b-instant"
     ):
         self.index = index
         self.llm_client = llm_client
@@ -67,15 +67,27 @@ class RAGBase:
     # The llm method sends the prompt to the LLM
 
     def llm(self, prompt):
-        response = self.llm_client.models.generate_content(
-            model=self.model,
-            contents=prompt,
-            config={
-            "system_instruction": self.instructions
-         }
-       )
+        # OpenAI-compatible clients (including Groq)
+        if hasattr(self.llm_client, "chat") and hasattr(self.llm_client.chat, "completions"):
+            response = self.llm_client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": self.instructions},
+                    {"role": "user", "content": prompt},
+                ],
+            )
+            return response.choices[0].message.content
 
-        return response.text
+        # Gemini-style clients
+        if hasattr(self.llm_client, "models") and hasattr(self.llm_client.models, "generate_content"):
+            response = self.llm_client.models.generate_content(
+                model=self.model,
+                contents=prompt,
+                config={"system_instruction": self.instructions},
+            )
+            return response.text
+
+        raise TypeError("Unsupported llm_client interface. Expected OpenAI-compatible or Gemini-style client.")
     
     # And the rag method wires it all together
     
